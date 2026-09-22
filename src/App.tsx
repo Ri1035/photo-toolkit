@@ -61,9 +61,12 @@ export default function App() {
       <div className="app-shell">
         <header className="site-header glass-card">
           <div className="logo-bubble" />
-          <div>
-            <div className="site-title">泡泡图片工坊</div>
-            <div className="site-tagline">本地图片压缩 · 格式转换 · 尺寸与 DPI 修改</div>
+          <div className="site-brand">
+            <div className="title-row">
+              <div className="site-title">泡泡图片工坊</div>
+              <span className="version-badge">v{__APP_VERSION__}</span>
+            </div>
+            <div className="site-tagline">本地处理 · 压缩 / 格式 / 尺寸 / 裁剪 / 水印 / 滤镜 / AI 抠图</div>
           </div>
           <div className="privacy-pill">🔒 纯本地处理 · 图片不上传</div>
         </header>
@@ -100,19 +103,21 @@ export default function App() {
                 )}
               </div>
               {zipPercent !== null && <span className="zip-progress">打包中 {zipPercent}%</span>}
-              <button className="glossy-btn" disabled={running} onClick={handleStart}>
-                {running ? '处理中…' : '开始处理'}
-              </button>
-              <button
-                className="glossy-btn blue"
-                disabled={doneTasks.length === 0 || zipPercent !== null}
-                onClick={handleZip}
-              >
-                打包下载 ZIP
-              </button>
-              <button className="glossy-btn ghost small" disabled={running} onClick={clearAll}>
-                清空
-              </button>
+              <div className="batch-actions">
+                <button className="glossy-btn" disabled={running} onClick={handleStart}>
+                  {running ? '处理中…' : '开始处理'}
+                </button>
+                <button
+                  className="glossy-btn blue"
+                  disabled={doneTasks.length === 0 || zipPercent !== null}
+                  onClick={handleZip}
+                >
+                  打包下载 ZIP
+                </button>
+                <button className="glossy-btn ghost small" disabled={running} onClick={clearAll}>
+                  清空
+                </button>
+              </div>
             </div>
           )}
 
