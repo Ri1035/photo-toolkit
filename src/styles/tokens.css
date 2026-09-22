@@ -1,0 +1,30 @@
+:root {
+  /* ── Frutiger Aero 色板：天空蓝 → 湖水青 → 新叶绿 ── */
+  --aero-sky-1: #8fd8ff;
+  --aero-sky-2: #3fb3f5;
+  --aero-sky-3: #1d8fd6;
+  --aero-aqua-1: #6fe3d4;
+  --aero-aqua-2: #23c3b2;
+  --aero-leaf-1: #c9ec8f;
+  --aero-leaf-2: #7cc94f;
+  --aero-leaf-3: #4da835;
+
+  --ink: #0d3a5c;
+  --ink-soft: #48708f;
+  --ink-faint: #6d92ac;
+
+  /* 玻璃材质 */
+  --glass-bg: rgba(255, 255, 255, 0.34);
+  --glass-bg-strong: rgba(255, 255, 255, 0.52);
+  --glass-border: rgba(255, 255, 255, 0.7);
+  --glass-shadow: 0 20px 55px rgba(8, 61, 105, 0.28);
+  --glass-inset: inset 0 1px 0 rgba(255, 255, 255, 0.85);
+
+  --radius-lg: 28px;
+  --radius-md: 18px;
+  --radius-sm: 12px;
+  --radius-pill: 999px;
+
+  --font-main: 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Noto Sans CJK SC',
+    'WenQuanYi Micro Hei', system-ui, sans-serif;
+}
