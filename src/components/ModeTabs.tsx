@@ -7,6 +7,11 @@ const MODES: { id: ModeId; label: string }[] = [
   { id: 'resize', label: '修改尺寸' },
   { id: 'dpi', label: '修改 DPI' },
   { id: 'gif', label: 'GIF 压缩' },
+  { id: 'clip', label: '图片裁剪' },
+  { id: 'watermark', label: '图片水印' },
+  { id: 'filter', label: '图片滤镜' },
+  { id: 'remove-bg', label: 'AI 抠图' },
+  { id: 'base64', label: 'Base64' },
 ]
 
 interface Props {

@@ -16,6 +16,11 @@ const MODE_HINT: Record<ModeId, string> = {
   resize: '支持 JPG / PNG / WebP / AVIF / GIF / BMP / HEIC，最多 100 张',
   dpi: '修改 DPI 仅支持 JPG / PNG（无损处理，不重压缩）',
   gif: 'GIF 压缩仅支持 GIF 动图',
+  clip: '支持 JPG / PNG / WebP / AVIF / GIF / BMP / HEIC，最多 100 张',
+  watermark: '支持 JPG / PNG / WebP / AVIF / GIF / BMP / HEIC，最多 100 张',
+  filter: '支持 JPG / PNG / WebP / AVIF / GIF / BMP / HEIC，最多 100 张',
+  base64: '支持任意图片格式（单张转换）',
+  'remove-bg': '支持 JPG / PNG / WebP，本地 AI 推理，图片不上传',
 }
 
 export function DropZone({ mode, onFiles, onReject }: Props) {

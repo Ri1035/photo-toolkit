@@ -74,6 +74,12 @@ export async function runTask(
     spec,
   }
 
+  // AI 抠图依赖 DOM（onnxruntime 资源加载），必须主线程执行
+  if (spec.mode === 'remove-bg') {
+    const out = await processImage(buffer, file.name, file.type, spec)
+    return { blob: new Blob([out.buffer], { type: out.mime }), meta: out.meta }
+  }
+
   if (getWorkers()) {
     return new Promise<PoolResult>((resolve, reject) => {
       queue.push({ req, resolve, reject })

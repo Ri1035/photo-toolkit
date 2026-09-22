@@ -4,6 +4,10 @@ import { computeTargetSize, resizeImage } from './resize'
 import { patchJpegDpi } from './dpi-jpeg'
 import { patchPngDpi } from './dpi-png'
 import { compressGif, compressGifToTarget, resizeGif } from './gif'
+import { cropImage } from './crop'
+import { applyWatermark } from './watermark'
+import { applyFilter } from './filter'
+import { removeBackground } from './removeBg'
 import { FORMAT_MIME, type ProcessMeta, type TaskSpec } from './types'
 
 export interface ProcessOutput {
@@ -36,6 +40,25 @@ export async function processImage(
 ): Promise<ProcessOutput> {
   const inputFormat = detectFormat(fileName, fileType)
   const inputBytes = new Uint8Array(buffer)
+
+  // ── AI 抠图 / 背景替换：主线程专用（依赖 DOM），不经过 Worker ──
+  if (spec.mode === 'remove-bg' && spec.removeBg) {
+    const blob = new Blob([buffer], { type: fileType || 'application/octet-stream' })
+    const r = await removeBackground(blob, spec.removeBg)
+    const out = await r.blob.arrayBuffer()
+    return {
+      buffer: out,
+      mime: r.mime,
+      meta: {
+        width: 0,
+        height: 0,
+        originalWidth: 0,
+        originalHeight: 0,
+        reached: true,
+        format: 'png',
+      },
+    }
+  }
 
   // ── GIF 专用管线 ─────────────────────────────
   if (inputFormat === 'gif' && (spec.mode === 'gif' || spec.mode === 'resize' || spec.mode === 'compress' || spec.mode === 'target-size')) {
@@ -85,11 +108,27 @@ export async function processImage(
       : spec.outputFormat
   if (outputFormat === 'gif') throw new Error('静态图片不支持输出 GIF，请选择其他格式')
 
-  // 缩放
+  // 图像变换（裁剪 → 水印 → 滤镜），然后缩放
   let working = image
-  const targetSize = computeTargetSize(image.width, image.height, spec.resize)
-  if (targetSize && (targetSize.width !== image.width || targetSize.height !== image.height)) {
-    working = await resizeImage(image, targetSize.width, targetSize.height)
+
+  if (spec.mode === 'clip' && spec.clip) {
+    const c = spec.clip
+    const w = Math.round(working.width * c.width)
+    const h = Math.round(working.height * c.height)
+    const x = Math.round(working.width * c.x)
+    const y = Math.round(working.height * c.y)
+    working = cropImage(working, x, y, w, h)
+  }
+  if (spec.mode === 'watermark' && spec.watermark) {
+    working = applyWatermark(working, spec.watermark)
+  }
+  if (spec.mode === 'filter' && spec.filter) {
+    working = applyFilter(working, spec.filter)
+  }
+
+  const targetSize = computeTargetSize(working.width, working.height, spec.resize)
+  if (targetSize && (targetSize.width !== working.width || targetSize.height !== working.height)) {
+    working = await resizeImage(working, targetSize.width, targetSize.height)
   }
 
   // 编码

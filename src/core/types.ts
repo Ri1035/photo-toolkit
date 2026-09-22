@@ -9,6 +9,11 @@ export type ModeId =
   | 'resize' // 修改宽高/分辨率
   | 'dpi' // 修改 DPI（无损字节补丁）
   | 'gif' // GIF 压缩
+  | 'clip' // 图片裁剪
+  | 'watermark' // 图片水印
+  | 'filter' // 图片滤镜
+  | 'base64' // 图片 ↔ Base64
+  | 'remove-bg' // AI 抠图 / 背景替换
 
 export type CompressOptions =
   | { kind: 'quality'; quality: number } // quality: 1-100
@@ -32,6 +37,50 @@ export interface GifSpec {
   targetBytes?: number
 }
 
+/** 裁剪矩形（像素，基于原图坐标系，值域 0-1 比例或绝对像素） */
+export interface ClipSpec {
+  x: number
+  y: number
+  width: number
+  height: number
+}
+
+export type WatermarkPosition = 'tl' | 'tr' | 'bl' | 'br' | 'center'
+
+export interface WatermarkSpec {
+  text: string
+  /** 字号（基于图片宽度比例 0.01-0.2） */
+  sizeRatio: number
+  /** 透明度 0-1 */
+  opacity: number
+  position: WatermarkPosition
+  /** 边距（基于图片宽度比例） */
+  marginRatio: number
+  color: string
+}
+
+export interface FilterSpec {
+  /** 亮度 0-2，1 为原图 */
+  brightness: number
+  /** 对比度 0-2，1 为原图 */
+  contrast: number
+  /** 饱和度 0-2，1 为原图 */
+  saturation: number
+  /** 模糊半径 px，0 为不模糊 */
+  blur: number
+}
+
+export interface RemoveBgSpec {
+  /** 抠图后动作：cutout 输出透明 PNG；replace 合成新背景 */
+  action: 'cutout' | 'replace'
+  /** replace 时的新背景色（纯色） */
+  bgColor?: string
+  /** replace 时的渐变背景（起点/终点色，二选一与 bgColor 互斥） */
+  bgGradient?: [string, string]
+  /** replace 时背景方向：vertical / horizontal */
+  bgDirection?: 'vertical' | 'horizontal'
+}
+
 export interface TaskSpec {
   mode: ModeId
   /** 输出格式；'original' 表示保持每张图片的原格式（heic/bmp 等回退为 jpeg） */
@@ -41,6 +90,14 @@ export interface TaskSpec {
   /** 输出图片 DPI（仅 jpeg/png 生效） */
   dpi?: number
   gif: GifSpec
+  /** 裁剪矩形 */
+  clip?: ClipSpec
+  /** 文字水印 */
+  watermark?: WatermarkSpec
+  /** 滤镜参数 */
+  filter?: FilterSpec
+  /** AI 抠图 / 背景替换 */
+  removeBg?: RemoveBgSpec
 }
 
 export interface ProcessMeta {

@@ -7,6 +7,11 @@ import { ConvertPanel } from './components/panels/ConvertPanel'
 import { ResizePanel } from './components/panels/ResizePanel'
 import { DpiPanel } from './components/panels/DpiPanel'
 import { GifPanel } from './components/panels/GifPanel'
+import { ClipPanel } from './components/panels/ClipPanel'
+import { WatermarkPanel } from './components/panels/WatermarkPanel'
+import { FilterPanel } from './components/panels/FilterPanel'
+import { RemoveBgPanel } from './components/panels/RemoveBgPanel'
+import { Base64Panel } from './components/panels/Base64Panel'
 import { TaskList } from './components/TaskList'
 import { buildSpec, defaultSettings, type UiSettings } from './components/ui-settings'
 import { useTaskStore } from './store/useTaskStore'
@@ -66,7 +71,9 @@ export default function App() {
         <main className="main-card glass-card">
           <ModeTabs mode={mode} onChange={setMode} />
 
-          <DropZone mode={mode} onFiles={handleFiles} onReject={setNotice} />
+          {mode !== 'base64' && (
+            <DropZone mode={mode} onFiles={handleFiles} onReject={setNotice} />
+          )}
           {notice && <p className="task-note" style={{ marginTop: -12, marginBottom: 14 }}>⚠ {notice}</p>}
 
           {mode === 'compress' && <CompressPanel settings={settings} onChange={patch} />}
@@ -75,8 +82,13 @@ export default function App() {
           {mode === 'resize' && <ResizePanel settings={settings} onChange={patch} />}
           {mode === 'dpi' && <DpiPanel settings={settings} onChange={patch} />}
           {mode === 'gif' && <GifPanel settings={settings} onChange={patch} />}
+          {mode === 'clip' && <ClipPanel settings={settings} onChange={patch} />}
+          {mode === 'watermark' && <WatermarkPanel settings={settings} onChange={patch} />}
+          {mode === 'filter' && <FilterPanel settings={settings} onChange={patch} />}
+          {mode === 'remove-bg' && <RemoveBgPanel settings={settings} onChange={patch} />}
+          {mode === 'base64' && <Base64Panel />}
 
-          {tasks.length > 0 && (
+          {mode !== 'base64' && tasks.length > 0 && (
             <div className="batch-bar glass-card">
               <div className="batch-stats">
                 共 <strong>{tasks.length}</strong> 张 · 原始合计 {formatBytes(totalIn)}
@@ -104,13 +116,13 @@ export default function App() {
             </div>
           )}
 
-          <TaskList tasks={tasks} onRemove={removeTask} />
+          {mode !== 'base64' && <TaskList tasks={tasks} onRemove={removeTask} />}
 
-          {tasks.length === 0 && (
+          {mode !== 'base64' && tasks.length === 0 && (
             <div className="empty-state">
-              支持批量处理 100 张图片 · 压缩到指定 KB · 格式互转 · 修改宽高/分辨率/DPI · GIF 动图压缩
+              支持批量处理 100 张图片 · 压缩到指定 KB · 格式互转 · 修改宽高/分辨率/DPI · GIF 动图压缩 · 裁剪 · 水印 · 滤镜 · AI 抠图
               <br />
-              基于 WebAssembly 编解码器（MozJPEG / OxiPNG / libwebp / gifsicle）在浏览器内运行
+              基于 WebAssembly 编解码器（MozJPEG / OxiPNG / libwebp / gifsicle / ONNX）在浏览器内运行，图片始终不上传
             </div>
           )}
         </main>
@@ -118,7 +130,7 @@ export default function App() {
         <footer className="site-footer">
           所有处理均在你的设备上完成，没有任何图片会被上传到服务器。
           <br />
-          开源组件：jSquash（Apache-2.0）· gifsicle-wasm-browser（MIT）· heic-to（LGPL-3.0）· JSZip（MIT）
+          开源组件：jSquash（Apache-2.0）· gifsicle-wasm-browser（MIT）· @imgly/background-removal（AGPL-3.0）· heic-to（LGPL-3.0）· JSZip（MIT）
         </footer>
       </div>
     </>

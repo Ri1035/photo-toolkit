@@ -6,7 +6,7 @@ import { defineConfig } from 'vite'
 export default defineConfig({
   plugins: [react()],
   optimizeDeps: {
-    // jSquash / gifsicle 均为 WASM 包，预打包会导致 WASM URL 解析失败，必须排除
+    // jSquash / gifsicle / imgly 均为 WASM 包，预打包会导致 WASM URL 解析失败，必须排除
     exclude: [
       '@jsquash/jpeg',
       '@jsquash/png',
@@ -15,6 +15,8 @@ export default defineConfig({
       '@jsquash/oxipng',
       '@jsquash/resize',
       'gifsicle-wasm-browser',
+      '@imgly/background-removal',
+      'onnxruntime-web',
     ],
   },
   worker: { format: 'es' },
@@ -22,5 +24,6 @@ export default defineConfig({
   test: {
     environment: 'node',
     include: ['src/test/**/*.spec.ts'],
+    setupFiles: ['src/test/setup.ts'],
   },
 })
