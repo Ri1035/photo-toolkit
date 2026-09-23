@@ -50,7 +50,7 @@ export default function App() {
         doneTasks.map((t) => ({ name: t.result!.outName, blob: t.result!.blob })),
         (p) => setZipPercent(Math.round(p)),
       )
-      saveBlob(blob, '泡泡图片工坊-打包.zip')
+      saveBlob(blob, 'KOKA-PhotoKit-打包.zip')
     } finally {
       setZipPercent(null)
     }
@@ -60,10 +60,10 @@ export default function App() {
     <>
       <div className="app-shell">
         <header className="site-header glass-card">
-          <div className="logo-bubble" />
+          <img className="logo-bubble" src="/logo.svg" alt="" aria-hidden="true" />
           <div className="site-brand">
             <div className="title-row">
-              <div className="site-title">泡泡图片工坊</div>
+              <div className="site-title">KOKA-PhotoKit</div>
               <span className="version-badge">v{__APP_VERSION__}</span>
             </div>
             <div className="site-tagline">本地处理 · 压缩 / 格式 / 尺寸 / 裁剪 / 水印 / 滤镜 / AI 抠图</div>

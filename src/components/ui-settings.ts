@@ -75,7 +75,7 @@ export const defaultSettings: UiSettings = {
   clipH: 80,
   clipX: 10,
   clipY: 10,
-  wmText: '泡泡图片工坊',
+  wmText: 'KOKA-PhotoKit',
   wmSizeRatio: 5,
   wmOpacity: 60,
   wmPosition: 'br',
