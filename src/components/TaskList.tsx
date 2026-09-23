@@ -1,16 +1,28 @@
+import { useState } from 'react'
 import type { TaskItem as TaskItemType } from '../store/useTaskStore'
 import { formatBytes, formatRatio } from '../utils/format'
 import { saveBlob } from '../utils/download'
+import { PreviewDialog } from './PreviewDialog'
 
 function TaskItem({ task, onRemove }: { task: TaskItemType; onRemove: () => void }) {
   const r = task.result
+  const [previewOpen, setPreviewOpen] = useState(false)
+  const canPreview = Boolean(r?.url) || Boolean(task.previewUrl)
+
   return (
     <div className="task-item">
-      {task.previewUrl ? (
-        <img className="task-thumb" src={task.previewUrl} alt={task.name} />
-      ) : (
-        <div className="task-thumb task-thumb-placeholder">🖼️</div>
-      )}
+      <button
+        className="task-thumb-btn"
+        disabled={!canPreview}
+        title={canPreview ? '查看大图' : '无法预览'}
+        onClick={() => setPreviewOpen(true)}
+      >
+        {task.previewUrl ? (
+          <img className="task-thumb" src={task.previewUrl} alt={task.name} />
+        ) : (
+          <div className="task-thumb task-thumb-placeholder">🖼️</div>
+        )}
+      </button>
 
       <div className="task-info">
         <div className="task-name" title={task.name}>
@@ -47,18 +59,25 @@ function TaskItem({ task, onRemove }: { task: TaskItemType; onRemove: () => void
 
       <div className="task-actions">
         {task.status === 'done' && r && (
-          <button
-            className="icon-btn"
-            title="下载"
-            onClick={() => saveBlob(r.blob, r.outName)}
-          >
-            ⬇
-          </button>
+          <>
+            <button className="icon-btn" title="预览" onClick={() => setPreviewOpen(true)}>
+              🔍
+            </button>
+            <button
+              className="icon-btn"
+              title="下载"
+              onClick={() => saveBlob(r.blob, r.outName)}
+            >
+              ⬇
+            </button>
+          </>
         )}
         <button className="icon-btn" title="移除" onClick={onRemove}>
           ✕
         </button>
       </div>
+
+      {previewOpen && <PreviewDialog task={task} onClose={() => setPreviewOpen(false)} />}
     </div>
   )
 }
